@@ -9,23 +9,23 @@ const debug = createDebug('project');
 export type ProjectInfraInfo = {
   type: 'bicep' | 'terraform';
   files: string[];
-}
+};
 
 export async function getProjectInfraInfo(targetPath: string): Promise<ProjectInfraInfo> {
   debug('Getting project info for path:', targetPath);
 
   const azureYamlPath = path.join(targetPath, 'azure.yaml');
-  if (!await pathExists(azureYamlPath)) {
+  if (!(await pathExists(azureYamlPath))) {
     throw new Error('Not an AZD project: missing azure.yaml');
   }
 
   const infraPath = path.join(targetPath, AZD_INFRA_PATH);
-  if (!await pathExists(infraPath)) {
+  if (!(await pathExists(infraPath))) {
     throw new Error('Not an AZD project: missing infra folder');
   }
 
   const mainBicepPath = path.join(infraPath, 'main.bicep');
-  if (!await pathExists(mainBicepPath)) {
+  if (!(await pathExists(mainBicepPath))) {
     throw new Error('No main.bicep file found: only Bicep infrastructure is currently supported');
   }
 

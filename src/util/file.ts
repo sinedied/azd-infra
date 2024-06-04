@@ -21,7 +21,7 @@ export async function isDirectory(path: string) {
   }
 }
 
-export async function ensureDir(path: string) {
+export async function ensureDirectory(path: string) {
   await fs.mkdir(path, { recursive: true });
 }
 

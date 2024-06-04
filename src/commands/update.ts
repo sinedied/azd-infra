@@ -2,11 +2,11 @@ import os from 'node:os';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import createDebug from 'debug';
-import { GlobalOptions } from "../options.js";
+import chalk from 'chalk';
+import { type GlobalOptions } from '../options.js';
 import { askForConfirmation, readFile, runCommand } from '../util/index.js';
 import { AZD_BICEP_PATH, AZD_INFRA_PATH, AZD_REPOSITORY } from '../constants.js';
-import { ProjectInfraInfo, getProjectInfraInfo } from '../project.js';
-import chalk from 'chalk';
+import { type ProjectInfraInfo, getProjectInfraInfo } from '../project.js';
 
 const debug = createDebug('update');
 
@@ -17,8 +17,8 @@ export type UpdateOptions = GlobalOptions & {
 export enum UpdateAction {
   UpToDate = 'up-to-date',
   ToUpdate = 'update',
-  Missing = 'missing',
-};
+  Missing = 'missing'
+}
 
 export async function update(targetPath: string, options: UpdateOptions) {
   debug('Running command with:', { targetPath, options });
@@ -33,15 +33,20 @@ export async function update(targetPath: string, options: UpdateOptions) {
     const file = path.join(AZD_INFRA_PATH, infraInfo.files[i]);
     const action = updateActions[i];
     switch (action) {
-      case UpdateAction.UpToDate:
-        console.info(chalk.gray(`[current] ${file}`)); 
+      case UpdateAction.UpToDate: {
+        console.info(chalk.gray(`[current] ${file}`));
         break;
-      case UpdateAction.ToUpdate:
+      }
+
+      case UpdateAction.ToUpdate: {
         console.info(chalk.yellow(`[update]  ${file}`));
         break;
-      case UpdateAction.Missing:
+      }
+
+      case UpdateAction.Missing: {
         console.info(chalk.red(`[missing] ${file}`));
         break;
+      }
     }
   }
 
@@ -52,14 +57,14 @@ export async function update(targetPath: string, options: UpdateOptions) {
     return;
   }
 
-  if (!(options.yes || await askForConfirmation('Update files?'))) {
+  if (!(options.yes || (await askForConfirmation('Update files?')))) {
     console.info('Update cancelled.');
     return;
   }
 
   const updatePromises = infraInfo.files
     .filter((_, i) => updateActions[i] === UpdateAction.ToUpdate)
-    .map(file => updateFile(file, azdPath));
+    .map(async (file) => updateFile(file, azdPath));
 
   await Promise.all(updatePromises);
 
@@ -79,14 +84,16 @@ async function getAzdRepoPath(_options: UpdateOptions) {
   }
 }
 
-async function compareInfraFiles(infraInfo: ProjectInfraInfo, azdPath: string): Promise<UpdateAction[]>{
-  const updateActions = await Promise.all(infraInfo.files.map(async (file) => {
-    // TODO: Terraform core files
-    const coreInfraPath = path.join(azdPath, AZD_BICEP_PATH);
-    const azdFile = path.join(coreInfraPath, file);
-    const infraFile = path.join(AZD_INFRA_PATH, file);
-    return compareFile(infraFile, azdFile);
-  }));
+async function compareInfraFiles(infraInfo: ProjectInfraInfo, azdPath: string): Promise<UpdateAction[]> {
+  const updateActions = await Promise.all(
+    infraInfo.files.map(async (file) => {
+      // TODO: Terraform core files
+      const coreInfraPath = path.join(azdPath, AZD_BICEP_PATH);
+      const azdFile = path.join(coreInfraPath, file);
+      const infraFile = path.join(AZD_INFRA_PATH, file);
+      return compareFile(infraFile, azdFile);
+    })
+  );
   return updateActions;
 }
 
@@ -110,12 +117,13 @@ async function updateFile(file: string, azdPath: string) {
     const infraFile = path.join(AZD_INFRA_PATH, file);
     await fs.writeFile(infraFile, azdContent);
     debug(`Updated file ${infraFile} with content from ${azdFile}`);
-  } catch (error) {
+  } catch (error_) {
+    const error = error_ as Error;
     debug(`Error updating file ${file}:`, error);
-    throw new Error(`Error updating file ${file}: ${error}`);
+    throw new Error(`Error updating file ${file}: ${error.message}`);
   }
 }
 
 function normalizeContent(content: string): string {
-  return content.replace(/\r\n/g, '\n').trim();
+  return content.replaceAll('\r\n', '\n').trim();
 }
