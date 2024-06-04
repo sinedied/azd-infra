@@ -3,7 +3,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import createDebug from 'debug';
 import { GlobalOptions } from "../options.js";
-import { readFile, runCommand } from '../util/index.js';
+import { askForConfirmation, readFile, runCommand } from '../util/index.js';
 import { AZD_BICEP_PATH, AZD_INFRA_PATH, AZD_REPOSITORY } from '../constants.js';
 import { ProjectInfraInfo, getProjectInfraInfo } from '../project.js';
 import chalk from 'chalk';
@@ -23,6 +23,8 @@ export enum UpdateAction {
 export async function update(targetPath: string, options: UpdateOptions) {
   debug('Running command with:', { targetPath, options });
 
+  // TODO: check for clean working directory
+
   const infraInfo = await getProjectInfraInfo(targetPath);
   const azdPath = await getAzdRepoPath(options);
   const updateActions = await compareInfraFiles(infraInfo, azdPath);
@@ -32,16 +34,36 @@ export async function update(targetPath: string, options: UpdateOptions) {
     const action = updateActions[i];
     switch (action) {
       case UpdateAction.UpToDate:
-        console.info(chalk.green(`[up-to-date] ${file}`)); 
+        console.info(chalk.gray(`[current] ${file}`)); 
         break;
       case UpdateAction.ToUpdate:
-        console.info(chalk.yellow(`[update] ${file}`));
+        console.info(chalk.yellow(`[update]  ${file}`));
         break;
       case UpdateAction.Missing:
         console.info(chalk.red(`[missing] ${file}`));
         break;
     }
   }
+
+  console.info();
+
+  if (!updateActions.includes(UpdateAction.ToUpdate)) {
+    console.info('No updates required.');
+    return;
+  }
+
+  if (!(options.yes || await askForConfirmation('Update files?'))) {
+    console.info('Update cancelled.');
+    return;
+  }
+
+  const updatePromises = infraInfo.files
+    .filter((_, i) => updateActions[i] === UpdateAction.ToUpdate)
+    .map(file => updateFile(file, azdPath));
+
+  await Promise.all(updatePromises);
+
+  console.info('Update successful.');
 }
 
 async function getAzdRepoPath(_options: UpdateOptions) {
@@ -76,6 +98,21 @@ async function compareFile(file: string, azdFile: string): Promise<UpdateAction>
   } catch (error) {
     debug('Error comparing files:', error);
     return UpdateAction.Missing;
+  }
+}
+
+async function updateFile(file: string, azdPath: string) {
+  try {
+    // TODO: Terraform core files
+    const coreInfraPath = path.join(azdPath, AZD_BICEP_PATH);
+    const azdFile = path.join(coreInfraPath, file);
+    const azdContent = await readFile(azdFile);
+    const infraFile = path.join(AZD_INFRA_PATH, file);
+    await fs.writeFile(infraFile, azdContent);
+    debug(`Updated file ${infraFile} with content from ${azdFile}`);
+  } catch (error) {
+    debug(`Error updating file ${file}:`, error);
+    throw new Error(`Error updating file ${file}: ${error}`);
   }
 }
 
