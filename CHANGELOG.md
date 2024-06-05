@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/sinedied/azd-infra/compare/1.1.4...1.1.5) (2024-06-05)
+
+
+### Bug Fixes
+
+* console output ([623beef](https://github.com/sinedied/azd-infra/commit/623beef423e48f89a601c1cd5e7a745ddc818669))
+
 ## [1.1.4](https://github.com/sinedied/azd-infra/compare/1.1.3...1.1.4) (2024-06-05)
 
 
