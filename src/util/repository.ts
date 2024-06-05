@@ -17,8 +17,8 @@ export async function isRepositoryDirty(): Promise<boolean> {
   }
 }
 
-export async function checkRepositoryDirty(): Promise<void> {
-  if (await isRepositoryDirty()) {
+export async function checkRepositoryDirty(allowUnclean: boolean): Promise<void> {
+  if (!allowUnclean && (await isRepositoryDirty())) {
     throw new Error(
       'Your working directory has uncommitted changes.\nPlease commit or stash your changes before running this command.'
     );
@@ -28,6 +28,7 @@ export async function checkRepositoryDirty(): Promise<void> {
 export async function cloneAzdRepository(): Promise<string> {
   const azdPath = path.join(os.tmpdir(), 'azd');
   try {
+    debug('Cloning azd repo to:', azdPath);
     await fs.rm(azdPath, { recursive: true, force: true });
     await runCommand(`git clone --depth 1 ${AZD_REPOSITORY} ${azdPath}`);
     debug('Cloned azd repo to:', azdPath);
