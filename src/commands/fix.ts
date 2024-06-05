@@ -85,7 +85,7 @@ async function fixMissingModules(targetPath: string, missingModules: string[]) {
 
     try {
       await fs.copyFile(source, target);
-      console.info(chalk.green(`Added missing module: ${missingModule}`));
+      console.info(chalk.green(`Added: ${missingModule}`));
     } catch (error_) {
       const error = error_ as Error;
       throw new Error(`Failed to add missing module ${missingModule}: ${error.message}`);
@@ -101,7 +101,7 @@ async function removeUnusedModules(targetPath: string, unusedModules: string[]) 
 
     try {
       await fs.rm(target);
-      console.info(chalk.green(`Removed unused module: ${unusedModule}`));
+      console.info(chalk.green(`Removed: ${unusedModule}`));
     } catch (error_) {
       const error = error_ as Error;
       throw new Error(`Failed to remove unused module ${unusedModule}: ${error.message}`);
