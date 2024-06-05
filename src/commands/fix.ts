@@ -31,17 +31,20 @@ export async function fix(targetPath: string, options: FixOptions) {
   }
 
   if (dependencyInfo.missing.length > 0) {
-    console.info(chalk.red('\nMissing modules:'));
-    for (const file of dependencyInfo.missing)
-      console.info(`- ${file}` + chalk.grey(` (used by ${dependencyUsedBy(file, dependencyInfo.graph).join(', ')})`));
+    console.info(`Missing modules: ${chalk.red(dependencyInfo.missing.length)}`);
+    for (const file of dependencyInfo.missing) {
+      console.info(`- ${chalk.red(file)}` + chalk.grey(` (used by ${dependencyUsedBy(file, dependencyInfo.graph).join(', ')})`));
+    }
   }
 
   if (dependencyInfo.unused.length > 0) {
-    console.info(chalk.yellow('\nUnused modules:'));
-    for (const file of dependencyInfo.unused) console.info(`- ${file}`);
+    console.info(`Unused modules: ${chalk.yellow(dependencyInfo.unused.length)}`);
+    for (const file of dependencyInfo.unused) {
+      console.info(`- ${chalk.yellow(file)}`);
+    }
   }
 
-  if (!(options.yes || (await askForConfirmation('\nAdd/remove files?')))) {
+  if (!(options.yes || (await askForConfirmation('Add/remove files?')))) {
     console.info('Clean up cancelled.');
     return;
   }
@@ -56,11 +59,11 @@ export async function fix(targetPath: string, options: FixOptions) {
     await removeUnusedModules(targetPath, dependencyInfo.unused);
   }
 
-  console.info('\nClean up completed.');
+  console.info('Clean up completed.');
 }
 
 async function fixMissingModules(targetPath: string, missingModules: string[]) {
-  console.info('\nAdding missing modules...');
+  console.info('Adding missing modules...');
   const azdPath = await cloneAzdRepository();
 
   for (const missingModule of missingModules) {
@@ -89,7 +92,7 @@ async function fixMissingModules(targetPath: string, missingModules: string[]) {
 }
 
 async function removeUnusedModules(targetPath: string, unusedModules: string[]) {
-  console.info('\nRemoving unused modules...');
+  console.info('Removing unused modules...');
 
   for (const unusedModule of unusedModules) {
     const target = path.join(targetPath, unusedModule);

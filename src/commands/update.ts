@@ -51,8 +51,6 @@ export async function update(targetPath: string, options: UpdateOptions) {
     }
   }
 
-  console.info();
-
   if (!updateActions.includes(UpdateAction.ToUpdate)) {
     console.info('No updates required.');
     return;
