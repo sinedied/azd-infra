@@ -33,7 +33,9 @@ export async function fix(targetPath: string, options: FixOptions) {
   if (dependencyInfo.missing.length > 0) {
     console.info(`Missing modules: ${chalk.red(dependencyInfo.missing.length)}`);
     for (const file of dependencyInfo.missing) {
-      console.info(`- ${chalk.red(file)}` + chalk.grey(` (used by ${dependencyUsedBy(file, dependencyInfo.graph).join(', ')})`));
+      console.info(
+        `- ${chalk.red(file)}` + chalk.grey(` (used by ${dependencyUsedBy(file, dependencyInfo.graph).join(', ')})`)
+      );
     }
   }
 
