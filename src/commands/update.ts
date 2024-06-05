@@ -24,7 +24,7 @@ export async function update(targetPath: string, options: UpdateOptions) {
   debug('Running command with:', { targetPath, options });
 
   const infraInfo = await getProjectInfraInfo(targetPath);
-  const azdPath = await getAzdRepoPath(options);
+  const azdPath = await getAzdRepoPath();
   const updateActions = await compareInfraFiles(infraInfo, azdPath);
 
   for (let i = 0; i < infraInfo.files.length; i++) {
@@ -73,7 +73,7 @@ export async function update(targetPath: string, options: UpdateOptions) {
   console.info('Update successful.');
 }
 
-async function getAzdRepoPath(_options: UpdateOptions) {
+async function getAzdRepoPath() {
   const azdPath = path.join(os.tmpdir(), 'azd');
   try {
     await fs.rm(azdPath, { recursive: true, force: true });
