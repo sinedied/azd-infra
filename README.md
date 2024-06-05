@@ -7,7 +7,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-blue?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-> Command line tool to manage your Azure Developer CLI (AZD) projects' infrastructure.
+> Command line tool to manage your [Azure Developer CLI (AZD)](https://aka.ms/azd) projects' infrastructure.
 
 ## Usage
 
