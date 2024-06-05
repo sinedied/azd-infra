@@ -14,9 +14,7 @@ import { AZD_BICEP_PATH, AZD_INFRA_PATH } from '../constants.js';
 
 const debug = createDebug('update');
 
-export type UpdateOptions = GlobalOptions & {
-  yes: boolean;
-};
+export type UpdateOptions = GlobalOptions;
 
 export enum UpdateAction {
   UpToDate = 'up-to-date',
@@ -26,6 +24,7 @@ export enum UpdateAction {
 
 export async function update(targetPath: string, options: UpdateOptions) {
   debug('Running command with:', { targetPath, options });
+  console.info('Checking your infrastructure for updates...');
 
   const infraInfo = await getProjectInfraInfo(targetPath);
   const azdPath = await cloneAzdRepository();
@@ -64,7 +63,7 @@ export async function update(targetPath: string, options: UpdateOptions) {
     return;
   }
 
-  await checkRepositoryDirty();
+  await checkRepositoryDirty(options.allowUnclean);
 
   const updatePromises = infraInfo.coreFiles
     .filter((_, i) => updateActions[i] === UpdateAction.ToUpdate)
