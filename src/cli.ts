@@ -6,7 +6,7 @@ import { type Command, program } from 'commander';
 import updateNotifier from 'update-notifier';
 import chalk from 'chalk';
 import { getPackageJson } from './util/index.js';
-import { type UpdateOptions, update } from './commands/index.js';
+import { type UpdateOptions, update, clean, type CleanOptions } from './commands/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -36,11 +36,19 @@ export async function run(arguments_: string[] = process.argv) {
   program
     .command('update [path]')
     .description('updates infra core templates')
-    // .option('--from-repo <path>', 'Use specified AZD repository folder as source')
     .action(async (targetPath: string | undefined, _options: any, command: Command) => {
       targetPath = targetPath?.trim() ?? '.';
       const options: UpdateOptions = command.optsWithGlobals();
       await update(targetPath, options);
+    });
+
+  program
+    .command('clean [path]')
+    .description('fixes missing and unused infra modules')
+    .action(async (targetPath: string | undefined, _options: any, command: Command) => {
+      targetPath = targetPath?.trim() ?? '.';
+      const options: CleanOptions = command.optsWithGlobals();
+      await clean(targetPath, options);
     });
 
   try {

@@ -1,13 +1,14 @@
 import path from 'node:path';
 import createDebug from 'debug';
 import glob from 'fast-glob';
-import { AZD_BICEP_CORE_GLOBS, AZD_INFRA_PATH } from './constants.js';
-import { pathExists } from './util/index.js';
+import { AZD_BICEP_ALL_GLOBS, AZD_BICEP_CORE_GLOBS, AZD_INFRA_PATH } from '../constants.js';
+import { pathExists } from '../util/index.js';
 
 const debug = createDebug('project');
 
 export type ProjectInfraInfo = {
   type: 'bicep' | 'terraform';
+  coreFiles: string[];
   files: string[];
 };
 
@@ -29,11 +30,12 @@ export async function getProjectInfraInfo(targetPath: string): Promise<ProjectIn
     throw new Error('No main.bicep file found: only Bicep infrastructure is currently supported');
   }
 
-  const files = await glob(AZD_BICEP_CORE_GLOBS, { cwd: infraPath });
-  debug('Found files:', files);
+  const coreFiles = await glob(AZD_BICEP_CORE_GLOBS, { cwd: infraPath });
+  const files = await glob(AZD_BICEP_ALL_GLOBS, { cwd: infraPath });
 
   return {
     type: 'bicep',
+    coreFiles,
     files
   };
 }

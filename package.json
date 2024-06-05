@@ -76,7 +76,10 @@
     "prettier": true,
     "envs": [
       "node"
-    ]
+    ],
+    "rules": {
+      "no-await-in-loop": "off"
+    }
   },
   "engines": {
     "node": ">=20.0.0",

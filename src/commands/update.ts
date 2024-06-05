@@ -2,16 +2,15 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import createDebug from 'debug';
 import chalk from 'chalk';
-import { type GlobalOptions } from '../options.js';
+import { type GlobalOptions, type ProjectInfraInfo, getProjectInfraInfo } from '../core/index.js';
 import {
   askForConfirmation,
   cloneAzdRepository,
-  isRepositoryDirty,
   readFile,
-  normalizeContent
+  normalizeContent,
+  checkRepositoryDirty
 } from '../util/index.js';
 import { AZD_BICEP_PATH, AZD_INFRA_PATH } from '../constants.js';
-import { type ProjectInfraInfo, getProjectInfraInfo } from '../project.js';
 
 const debug = createDebug('update');
 
@@ -32,8 +31,8 @@ export async function update(targetPath: string, options: UpdateOptions) {
   const azdPath = await cloneAzdRepository();
   const updateActions = await compareInfraFiles(infraInfo, azdPath);
 
-  for (let i = 0; i < infraInfo.files.length; i++) {
-    const file = path.join(AZD_INFRA_PATH, infraInfo.files[i]);
+  for (let i = 0; i < infraInfo.coreFiles.length; i++) {
+    const file = path.join(AZD_INFRA_PATH, infraInfo.coreFiles[i]);
     const action = updateActions[i];
     switch (action) {
       case UpdateAction.UpToDate: {
@@ -65,13 +64,9 @@ export async function update(targetPath: string, options: UpdateOptions) {
     return;
   }
 
-  if (await isRepositoryDirty()) {
-    throw new Error(
-      'Your working directory has uncommitted changes.\nPlease commit or stash your changes before running this command.'
-    );
-  }
+  await checkRepositoryDirty();
 
-  const updatePromises = infraInfo.files
+  const updatePromises = infraInfo.coreFiles
     .filter((_, i) => updateActions[i] === UpdateAction.ToUpdate)
     .map(async (file) => updateFile(file, azdPath));
 
@@ -82,7 +77,7 @@ export async function update(targetPath: string, options: UpdateOptions) {
 
 async function compareInfraFiles(infraInfo: ProjectInfraInfo, azdPath: string): Promise<UpdateAction[]> {
   const updateActions = await Promise.all(
-    infraInfo.files.map(async (file) => {
+    infraInfo.coreFiles.map(async (file) => {
       // TODO: Terraform support
       const coreInfraPath = path.join(azdPath, AZD_BICEP_PATH);
       const azdFile = path.join(coreInfraPath, file);

@@ -25,20 +25,6 @@ export async function readFile(file: string) {
   return fs.readFile(file, 'utf8');
 }
 
-export async function readAllFiles(files: string[]) {
-  const promises = files.map(async (file) => readFile(file));
-  return Promise.all(promises);
-}
-
-export async function isDirectory(path: string) {
-  try {
-    const stat = await fs.lstat(path);
-    return stat.isDirectory();
-  } catch {
-    return false;
-  }
-}
-
-export async function ensureDirectory(path: string) {
-  await fs.mkdir(path, { recursive: true });
+export function removeFirstPosixPathSegment(filePath: string): string {
+  return filePath.split('/').slice(1).join('/');
 }

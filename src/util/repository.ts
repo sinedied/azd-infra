@@ -17,6 +17,14 @@ export async function isRepositoryDirty(): Promise<boolean> {
   }
 }
 
+export async function checkRepositoryDirty(): Promise<void> {
+  if (await isRepositoryDirty()) {
+    throw new Error(
+      'Your working directory has uncommitted changes.\nPlease commit or stash your changes before running this command.'
+    );
+  }
+}
+
 export async function cloneAzdRepository(): Promise<string> {
   const azdPath = path.join(os.tmpdir(), 'azd');
   try {
