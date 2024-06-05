@@ -1,20 +1,9 @@
-import { createInterface } from 'node:readline';
-import process from 'node:process';
-
-export async function askForInput(question: string): Promise<string> {
-  return new Promise((resolve, _reject) => {
-    const read = createInterface({
-      input: process.stdin,
-      output: process.stdout
-    });
-    read.question(question, (answer) => {
-      read.close();
-      resolve(answer);
-    });
-  });
-}
+import { confirm } from '@inquirer/prompts';
 
 export async function askForConfirmation(question: string): Promise<boolean> {
-  const answer = await askForInput(`${question} [Y/n] `);
-  return answer.toLowerCase() !== 'n';
+  try {
+    return await confirm({ message: question, default: true });
+  } catch {
+    return false;
+  }
 }
