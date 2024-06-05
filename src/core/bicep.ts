@@ -2,7 +2,7 @@ import path from 'node:path';
 import createDebug from 'debug';
 import glob from 'fast-glob';
 import { AZD_BICEP_CORE_GLOBS, AZD_BICEP_PATH, AZD_INFRA_PATH } from '../constants.js';
-import { pathExists, readFile } from '../util/index.js';
+import { deepClone, pathExists, readFile } from '../util/index.js';
 import { type DependencyInfo, isDependencyUsed } from './dependency.js';
 
 const debug = createDebug('bicep');
@@ -48,17 +48,39 @@ export async function getBicepDependencyInfo(
   }
 
   deps.all = [...allFiles];
-
-  // Find unused dependencies
-  for (const file of allFiles) {
-    if (!isDependencyUsed(file, deps.graph) && !file.endsWith('main.bicep')) {
-      deps.unused.push(file);
-    }
-  }
+  deps.unused = await findUnusedDependencies(deps.all, deps.graph);
 
   debug('Dependency info:', deps);
 
   return deps;
+}
+
+async function findUnusedDependencies(files: string[], graph: Record<string, string[]>) {
+  const unused = new Set<string>();
+  const usedGraph = deepClone(graph);
+  let hasChanged = true;
+
+  // Keep iterating until no more changes are made,
+  // as removing one dependency might make another unused
+  while (hasChanged) {
+    hasChanged = false;
+
+    for (const file of files) {
+      if (unused.has(file)) {
+        continue;
+      }
+
+      if (!isDependencyUsed(file, usedGraph) && !file.endsWith('main.bicep')) {
+        debug(`Found new unused dependency: ${file}`);
+        unused.add(file);
+        hasChanged = true;
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        delete usedGraph[file];
+      }
+    }
+  }
+
+  return [...unused];
 }
 
 async function getBicepDependencies(file: string): Promise<string[]> {
