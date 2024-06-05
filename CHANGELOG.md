@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/sinedied/azd-infra/compare/1.1.3...1.1.4) (2024-06-05)
+
+
+### Bug Fixes
+
+* copy template with add command ([c5ca619](https://github.com/sinedied/azd-infra/commit/c5ca619ae017236af5168fb6ebb62f3ccc07bf13))
+
 ## [1.1.3](https://github.com/sinedied/azd-infra/compare/1.1.2...1.1.3) (2024-06-05)
 
 
