@@ -10,21 +10,20 @@ import {
   pathExists,
   removeFirstPosixPathSegment
 } from '../util/index.js';
-import { AZD_BICEP_CORE_PATH, AZD_INFRA_PATH } from '../constants.js';
+import { AZD_BICEP_CORE_PATH, AZD_BICEP_PATH, AZD_INFRA_PATH } from '../constants.js';
 
 const debug = createDebug('update');
 
-export type FixOptions = GlobalOptions & {
-  yes: boolean;
-};
+export type FixOptions = GlobalOptions;
 
 export async function fix(targetPath: string, options: FixOptions) {
   debug('Running command with:', { targetPath, options });
+  console.info('Checking your infrastructure for issues...');
 
   const infraInfo = await getProjectInfraInfo(targetPath);
   const dependencyInfo = await getBicepDependencyInfo(infraInfo.files);
 
-  console.info(`Found ${dependencyInfo.all.length} infra modules.`);
+  console.info(`Found ${chalk.cyan(dependencyInfo.all.length)} infra modules.`);
 
   if (dependencyInfo.missing.length === 0 && dependencyInfo.unused.length === 0) {
     console.info('No unused or missing modules found, all good!');
@@ -34,7 +33,7 @@ export async function fix(targetPath: string, options: FixOptions) {
   if (dependencyInfo.missing.length > 0) {
     console.info(chalk.red('\nMissing modules:'));
     for (const file of dependencyInfo.missing)
-      console.info(`- ${file} [used by ${dependencyUsedBy(file, dependencyInfo.graph).join(', ')}]`);
+      console.info(`- ${file}` + chalk.grey(` (used by ${dependencyUsedBy(file, dependencyInfo.graph).join(', ')})`));
   }
 
   if (dependencyInfo.unused.length > 0) {
@@ -42,16 +41,22 @@ export async function fix(targetPath: string, options: FixOptions) {
     for (const file of dependencyInfo.unused) console.info(`- ${file}`);
   }
 
-  if (!(options.yes || (await askForConfirmation('Add/remove files?')))) {
+  if (!(options.yes || (await askForConfirmation('\nAdd/remove files?')))) {
     console.info('Clean up cancelled.');
     return;
   }
 
-  await checkRepositoryDirty();
-  await fixMissingModules(targetPath, dependencyInfo.missing);
-  await removeUnusedModules(targetPath, dependencyInfo.unused);
+  await checkRepositoryDirty(options.allowUnclean);
 
-  console.info('Clean up completed.');
+  if (dependencyInfo.missing.length > 0) {
+    await fixMissingModules(targetPath, dependencyInfo.missing);
+  }
+
+  if (dependencyInfo.unused.length > 0) {
+    await removeUnusedModules(targetPath, dependencyInfo.unused);
+  }
+
+  console.info('\nClean up completed.');
 }
 
 async function fixMissingModules(targetPath: string, missingModules: string[]) {
@@ -64,8 +69,9 @@ async function fixMissingModules(targetPath: string, missingModules: string[]) {
       continue;
     }
 
-    const source = path.join(azdPath, removeFirstPosixPathSegment(missingModule));
+    const source = path.join(azdPath, AZD_BICEP_PATH, removeFirstPosixPathSegment(missingModule));
     const target = path.join(targetPath, missingModule);
+    debug(`Copying missing module from: ${source}`);
 
     if (!(await pathExists(source))) {
       console.info(chalk.red(`Missing core module does not exists: ${missingModule}`));
