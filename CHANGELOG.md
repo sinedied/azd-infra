@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/sinedied/azd-infra/compare/1.0.0...1.0.1) (2024-06-05)
+
+
+### Bug Fixes
+
+* missing package ([5a8d85a](https://github.com/sinedied/azd-infra/commit/5a8d85a5bb466b5a7160ddd55434f0e89de2bb3e))
+
 # 1.0.0 (2024-06-05)
 
 
