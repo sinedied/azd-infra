@@ -1,6 +1,6 @@
 {
   "name": "azd-infra",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Manages your Azure Developer CLI projects' infrastructure",
   "type": "module",
   "bin": {

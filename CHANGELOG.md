@@ -1,3 +1,5 @@
+## [1.1.6](https://github.com/sinedied/azd-infra/compare/1.1.5...1.1.6) (2024-06-05)
+
 ## [1.1.5](https://github.com/sinedied/azd-infra/compare/1.1.4...1.1.5) (2024-06-05)
 
 
