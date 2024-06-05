@@ -21,6 +21,11 @@ export async function add(targetPath: string, options: AddOptions) {
   const selected = await selectMany('Select core templates to add', coreTemplates);
   debug('Selected core templates:', selected);
 
+  if (selected.length === 0) {
+    console.info('No core templates selected, nothing to add.');
+    return;
+  }
+
   const templatesToAdd = await resolveDependencies(selected, azdPath);
   console.info('Resolved core templates with dependencies:');
 
