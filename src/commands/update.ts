@@ -4,7 +4,7 @@ import path from 'node:path';
 import createDebug from 'debug';
 import chalk from 'chalk';
 import { type GlobalOptions } from '../options.js';
-import { askForConfirmation, readFile, runCommand } from '../util/index.js';
+import { askForConfirmation, isRepositoryDirty, readFile, runCommand } from '../util/index.js';
 import { AZD_BICEP_PATH, AZD_INFRA_PATH, AZD_REPOSITORY } from '../constants.js';
 import { type ProjectInfraInfo, getProjectInfraInfo } from '../project.js';
 
@@ -22,8 +22,6 @@ export enum UpdateAction {
 
 export async function update(targetPath: string, options: UpdateOptions) {
   debug('Running command with:', { targetPath, options });
-
-  // TODO: check for clean working directory
 
   const infraInfo = await getProjectInfraInfo(targetPath);
   const azdPath = await getAzdRepoPath(options);
@@ -62,6 +60,10 @@ export async function update(targetPath: string, options: UpdateOptions) {
     return;
   }
 
+  if (await isRepositoryDirty()) {
+    throw new Error('Your working directory has uncommitted changes.\nPlease commit or stash your changes before running this command.');
+  }
+
   const updatePromises = infraInfo.files
     .filter((_, i) => updateActions[i] === UpdateAction.ToUpdate)
     .map(async (file) => updateFile(file, azdPath));
@@ -87,7 +89,7 @@ async function getAzdRepoPath(_options: UpdateOptions) {
 async function compareInfraFiles(infraInfo: ProjectInfraInfo, azdPath: string): Promise<UpdateAction[]> {
   const updateActions = await Promise.all(
     infraInfo.files.map(async (file) => {
-      // TODO: Terraform core files
+      // TODO: Terraform support
       const coreInfraPath = path.join(azdPath, AZD_BICEP_PATH);
       const azdFile = path.join(coreInfraPath, file);
       const infraFile = path.join(AZD_INFRA_PATH, file);
@@ -110,7 +112,7 @@ async function compareFile(file: string, azdFile: string): Promise<UpdateAction>
 
 async function updateFile(file: string, azdPath: string) {
   try {
-    // TODO: Terraform core files
+    // TODO: Terraform support
     const coreInfraPath = path.join(azdPath, AZD_BICEP_PATH);
     const azdFile = path.join(coreInfraPath, file);
     const azdContent = await readFile(azdFile);
