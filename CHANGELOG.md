@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/sinedied/azd-infra/compare/1.1.2...1.1.3) (2024-06-05)
+
+
+### Bug Fixes
+
+* add command when no templates selected ([4b4e6dc](https://github.com/sinedied/azd-infra/commit/4b4e6dc6b3d4656a3b67765650daa49e667a0d25))
+
 ## [1.1.2](https://github.com/sinedied/azd-infra/compare/1.1.1...1.1.2) (2024-06-05)
 
 
