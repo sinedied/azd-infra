@@ -1,3 +1,16 @@
+# [1.1.0](https://github.com/sinedied/azd-infra/compare/1.0.1...1.1.0) (2024-06-05)
+
+
+### Bug Fixes
+
+* message ([9db31f5](https://github.com/sinedied/azd-infra/commit/9db31f5f8cd6a81fa62209c8ec6eef48eb5e192a))
+* not all unused dependencies found ([21da61c](https://github.com/sinedied/azd-infra/commit/21da61c1e8e310432921c72fab35b817e796b682))
+
+
+### Features
+
+* new add command ([88ce91b](https://github.com/sinedied/azd-infra/commit/88ce91bd0ce3047d6fcab896f5acbd6a32e416eb))
+
 ## [1.0.1](https://github.com/sinedied/azd-infra/compare/1.0.0...1.0.1) (2024-06-05)
 
 
