@@ -1,2 +1,2 @@
-export * from './clean.js';
+export * from './fix.js';
 export * from './update.js';

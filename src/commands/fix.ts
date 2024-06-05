@@ -14,11 +14,11 @@ import { AZD_BICEP_CORE_PATH, AZD_INFRA_PATH } from '../constants.js';
 
 const debug = createDebug('update');
 
-export type CleanOptions = GlobalOptions & {
+export type FixOptions = GlobalOptions & {
   yes: boolean;
 };
 
-export async function clean(targetPath: string, options: CleanOptions) {
+export async function fix(targetPath: string, options: FixOptions) {
   debug('Running command with:', { targetPath, options });
 
   const infraInfo = await getProjectInfraInfo(targetPath);

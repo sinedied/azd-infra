@@ -6,7 +6,7 @@ import { type Command, program } from 'commander';
 import updateNotifier from 'update-notifier';
 import chalk from 'chalk';
 import { getPackageJson } from './util/index.js';
-import { type UpdateOptions, update, clean, type CleanOptions } from './commands/index.js';
+import { type UpdateOptions, update, fix, type FixOptions } from './commands/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -43,12 +43,12 @@ export async function run(arguments_: string[] = process.argv) {
     });
 
   program
-    .command('clean [path]')
+    .command('fix [path]')
     .description('fixes missing and unused infra modules')
     .action(async (targetPath: string | undefined, _options: any, command: Command) => {
       targetPath = targetPath?.trim() ?? '.';
-      const options: CleanOptions = command.optsWithGlobals();
-      await clean(targetPath, options);
+      const options: FixOptions = command.optsWithGlobals();
+      await fix(targetPath, options);
     });
 
   try {
