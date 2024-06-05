@@ -96,7 +96,7 @@ async function compareFile(file: string, azdFile: string): Promise<UpdateAction>
   }
 }
 
-async function updateFile(file: string, azdPath: string) {
+async function updateFile(file: string, azdPath: string): Promise<void> {
   try {
     // TODO: Terraform support
     const coreInfraPath = path.join(azdPath, AZD_BICEP_PATH);
