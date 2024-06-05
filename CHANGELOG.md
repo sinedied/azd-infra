@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/sinedied/azd-infra/compare/1.1.1...1.1.2) (2024-06-05)
+
+
+### Bug Fixes
+
+* fix command output ([ff3be74](https://github.com/sinedied/azd-infra/commit/ff3be74d51f782672ef239b62e9b786daa4690a0))
+
 ## [1.1.1](https://github.com/sinedied/azd-infra/compare/1.1.0...1.1.1) (2024-06-05)
 
 # [1.1.0](https://github.com/sinedied/azd-infra/compare/1.0.1...1.1.0) (2024-06-05)
