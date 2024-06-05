@@ -31,7 +31,7 @@ export async function add(targetPath: string, options: AddOptions) {
 
   const coreTemplateBasePath = path.join(azdPath, AZD_BICEP_PATH);
   for (const template of templatesToAdd) {
-    console.info(`- ${template.slice(Math.max(0, coreTemplateBasePath.length + 1))}`);
+    console.info(`- ${template.slice(coreTemplateBasePath.length + 1)}`);
   }
 
   if (
@@ -56,8 +56,10 @@ async function resolveDependencies(selected: string[], azdPath: string): Promise
 
 async function copyCoreTemplates(selected: string[], azdPath: string, targetPath: string): Promise<void> {
   const copyPromises = selected.map(async (file) => {
-    const source = path.join(azdPath, AZD_BICEP_PATH, file);
-    const destination = path.join(targetPath, AZD_INFRA_PATH, file);
+    const source = file;
+    const coreTemplateBasePath = path.join(azdPath, AZD_BICEP_PATH);
+    const coreFile = file.slice(coreTemplateBasePath.length + 1);
+    const destination = path.join(targetPath, AZD_INFRA_PATH, coreFile);
     debug('Copying:', { source, destination });
 
     try {
