@@ -69,7 +69,7 @@ export async function update(targetPath: string, options: UpdateOptions) {
 
   await Promise.all(updatePromises);
 
-  console.info('Update successful.');
+  console.info('Update completed.');
 }
 
 async function compareInfraFiles(infraInfo: ProjectInfraInfo, azdPath: string): Promise<UpdateAction[]> {

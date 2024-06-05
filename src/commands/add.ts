@@ -27,6 +27,7 @@ export async function add(targetPath: string, options: AddOptions) {
   }
 
   const templatesToAdd = await resolveDependencies(selected, azdPath);
+  debug('Resolved core templates with dependencies:', templatesToAdd);
   console.info('Resolved core templates with dependencies:');
 
   const coreTemplateBasePath = path.join(azdPath, AZD_BICEP_PATH);
@@ -46,12 +47,13 @@ export async function add(targetPath: string, options: AddOptions) {
 
   await copyCoreTemplates(templatesToAdd, azdPath, targetPath);
 
-  console.info(`Added ${chalk.cyan(templatesToAdd.length)} core templates to your project.`);
+  console.info(`Add completed.`);
 }
 
 async function resolveDependencies(selected: string[], azdPath: string): Promise<string[]> {
   const dependencyInfo = await getBicepDependencyInfo(selected, path.join(azdPath, AZD_BICEP_PATH));
-  return dependencyInfo.all;
+  const selectedFiles = selected.map((file) => path.join(azdPath, AZD_BICEP_PATH, file));
+  return [...new Set([...selectedFiles, ...dependencyInfo.all])];
 }
 
 async function copyCoreTemplates(selected: string[], azdPath: string, targetPath: string): Promise<void> {
@@ -65,6 +67,7 @@ async function copyCoreTemplates(selected: string[], azdPath: string, targetPath
     try {
       await ensureDirectory(path.dirname(destination));
       await fs.copyFile(source, destination);
+      console.info(chalk.cyan(`Added: ${path.join(AZD_INFRA_PATH, coreFile)}`));
     } catch (error_) {
       const error = error_ as Error;
       throw new Error(`Failed to copy core template ${source} to ${destination}: ${error.message}`);

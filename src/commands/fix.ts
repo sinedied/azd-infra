@@ -61,7 +61,7 @@ export async function fix(targetPath: string, options: FixOptions) {
     await removeUnusedModules(targetPath, dependencyInfo.unused);
   }
 
-  console.info('Clean up completed.');
+  console.info('Fix completed.');
 }
 
 async function fixMissingModules(targetPath: string, missingModules: string[]) {
