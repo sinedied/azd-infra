@@ -26,7 +26,8 @@
     "chalk": "^5.3.0",
     "commander": "^12.1.0",
     "debug": "^4.3.5",
-    "fast-glob": "^3.3.2"
+    "fast-glob": "^3.3.2",
+    "update-notifier": "^7.0.0"
   },
   "devDependencies": {
     "@types/debug": "^4.1.12",
@@ -36,7 +37,6 @@
     "semantic-release-npm-github": "^5.0.0",
     "simple-git-hooks": "^2.11.1",
     "typescript": "^5.4.5",
-    "update-notifier": "^7.0.0",
     "xo": "^0.58.0"
   },
   "keywords": [
