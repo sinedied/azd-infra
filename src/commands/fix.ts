@@ -47,7 +47,7 @@ export async function fix(targetPath: string, options: FixOptions) {
   }
 
   if (!(options.yes || (await askForConfirmation('Add/remove files?')))) {
-    console.info('Clean up cancelled.');
+    console.info('Cancelled, no changes made.');
     return;
   }
 
