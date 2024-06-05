@@ -22,4 +22,5 @@ npx azd-infra <command>
 
 - `azd-infra update`: Checks your project's infrastructure and updates it using latest AZD core templates.
 - `azd-infra fix`: Checks your project's infrastructure dependency graph for missing or unused resources and fixes them.
+- `azd-infra refresh`: Runs `update` and `fix` in sequence.
 

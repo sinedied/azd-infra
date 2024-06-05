@@ -6,7 +6,7 @@ import { type Command, program } from 'commander';
 import updateNotifier from 'update-notifier';
 import chalk from 'chalk';
 import { getPackageJson } from './util/index.js';
-import { type UpdateOptions, update, fix, type FixOptions } from './commands/index.js';
+import { type UpdateOptions, update, fix, type FixOptions, type RefreshOptions, refresh } from './commands/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -24,6 +24,7 @@ export async function run(arguments_: string[] = process.argv) {
     .description("Manages your Azure Developer CLI projects' infrastructure.")
     .option('--verbose', 'show detailed logs')
     .option('-y, --yes', 'do not ask for confirmation', false)
+    .option('-u, --allow-unclean', 'skip unclean working directory check', false)
     .version(package_.version, '-v, --version', 'show the current version')
     .helpCommand(false)
     .configureOutput({
@@ -49,6 +50,15 @@ export async function run(arguments_: string[] = process.argv) {
       targetPath = targetPath?.trim() ?? '.';
       const options: FixOptions = command.optsWithGlobals();
       await fix(targetPath, options);
+    });
+
+  program
+    .command('refresh [path]')
+    .description('runs update and fix in one go')
+    .action(async (targetPath: string | undefined, _options: any, command: Command) => {
+      targetPath = targetPath?.trim() ?? '.';
+      const options: RefreshOptions = command.optsWithGlobals();
+      await refresh(targetPath, options);
     });
 
   try {
