@@ -1,14 +1,18 @@
 import path from 'node:path';
 import createDebug from 'debug';
-import { AZD_INFRA_PATH } from '../constants.js';
+import glob from 'fast-glob';
+import { AZD_BICEP_CORE_GLOBS, AZD_BICEP_PATH, AZD_INFRA_PATH } from '../constants.js';
 import { pathExists, readFile } from '../util/index.js';
 import { type DependencyInfo, isDependencyUsed } from './dependency.js';
 
 const debug = createDebug('bicep');
 const bicepModuleRegex = /module\s+[\w_]+\s+'(.+)'/g;
 
-export async function getBicepDependencyInfo(files: string[]): Promise<DependencyInfo> {
-  const bicepFiles = files.filter((file) => file.endsWith('.bicep')).map((file) => path.join(AZD_INFRA_PATH, file));
+export async function getBicepDependencyInfo(
+  files: string[],
+  basePath: string = AZD_INFRA_PATH
+): Promise<DependencyInfo> {
+  const bicepFiles = files.filter((file) => file.endsWith('.bicep')).map((file) => path.join(basePath, file));
 
   const deps: DependencyInfo = {
     graph: {},
@@ -70,4 +74,12 @@ async function getBicepDependencies(file: string): Promise<string[]> {
 
   // Make sure dependencies are unique
   return [...new Set(dependencies)];
+}
+
+export async function getBicepCoreTemplates(azdPath: string) {
+  const coreInfraPath = path.join(azdPath, AZD_BICEP_PATH);
+  const coreFiles = await glob(AZD_BICEP_CORE_GLOBS, { cwd: coreInfraPath });
+  debug('Found core template files:', coreFiles);
+
+  return coreFiles;
 }

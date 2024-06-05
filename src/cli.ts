@@ -6,7 +6,16 @@ import { type Command, program } from 'commander';
 import updateNotifier from 'update-notifier';
 import chalk from 'chalk';
 import { getPackageJson } from './util/index.js';
-import { type UpdateOptions, update, fix, type FixOptions, type RefreshOptions, refresh } from './commands/index.js';
+import {
+  type UpdateOptions,
+  update,
+  fix,
+  type FixOptions,
+  type RefreshOptions,
+  refresh,
+  type AddOptions,
+  add
+} from './commands/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -33,6 +42,15 @@ export async function run(arguments_: string[] = process.argv) {
       }
     })
     .allowExcessArguments(false);
+
+  program
+    .command('add [path]')
+    .description('adds infra core templates')
+    .action(async (targetPath: string | undefined, _options: any, command: Command) => {
+      targetPath = targetPath?.trim() ?? '.';
+      const options: AddOptions = command.optsWithGlobals();
+      await add(targetPath, options);
+    });
 
   program
     .command('update [path]')
