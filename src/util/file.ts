@@ -12,19 +12,6 @@ export async function getPackageJson(basePath: string): Promise<PackageJson> {
   return package_;
 }
 
-export async function isDirectory(path: string) {
-  try {
-    const stat = await fs.lstat(path);
-    return stat.isDirectory();
-  } catch {
-    return false;
-  }
-}
-
-export async function ensureDirectory(path: string) {
-  await fs.mkdir(path, { recursive: true });
-}
-
 export async function pathExists(path: string) {
   try {
     await fs.access(path);
@@ -41,4 +28,17 @@ export async function readFile(file: string) {
 export async function readAllFiles(files: string[]) {
   const promises = files.map(async (file) => readFile(file));
   return Promise.all(promises);
+}
+
+export async function isDirectory(path: string) {
+  try {
+    const stat = await fs.lstat(path);
+    return stat.isDirectory();
+  } catch {
+    return false;
+  }
+}
+
+export async function ensureDirectory(path: string) {
+  await fs.mkdir(path, { recursive: true });
 }

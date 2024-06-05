@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 export const AZD_REPOSITORY = 'https://github.com/Azure/azure-dev';
 export const AZD_INFRA_PATH = 'infra';
 export const AZD_BICEP_PATH = 'templates/common/infra/bicep';

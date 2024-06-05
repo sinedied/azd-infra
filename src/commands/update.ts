@@ -1,11 +1,16 @@
-import os from 'node:os';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import createDebug from 'debug';
 import chalk from 'chalk';
 import { type GlobalOptions } from '../options.js';
-import { askForConfirmation, isRepositoryDirty, readFile, runCommand } from '../util/index.js';
-import { AZD_BICEP_PATH, AZD_INFRA_PATH, AZD_REPOSITORY } from '../constants.js';
+import {
+  askForConfirmation,
+  cloneAzdRepository,
+  isRepositoryDirty,
+  readFile,
+  normalizeContent
+} from '../util/index.js';
+import { AZD_BICEP_PATH, AZD_INFRA_PATH } from '../constants.js';
 import { type ProjectInfraInfo, getProjectInfraInfo } from '../project.js';
 
 const debug = createDebug('update');
@@ -24,7 +29,7 @@ export async function update(targetPath: string, options: UpdateOptions) {
   debug('Running command with:', { targetPath, options });
 
   const infraInfo = await getProjectInfraInfo(targetPath);
-  const azdPath = await getAzdRepoPath();
+  const azdPath = await cloneAzdRepository();
   const updateActions = await compareInfraFiles(infraInfo, azdPath);
 
   for (let i = 0; i < infraInfo.files.length; i++) {
@@ -61,7 +66,9 @@ export async function update(targetPath: string, options: UpdateOptions) {
   }
 
   if (await isRepositoryDirty()) {
-    throw new Error('Your working directory has uncommitted changes.\nPlease commit or stash your changes before running this command.');
+    throw new Error(
+      'Your working directory has uncommitted changes.\nPlease commit or stash your changes before running this command.'
+    );
   }
 
   const updatePromises = infraInfo.files
@@ -71,19 +78,6 @@ export async function update(targetPath: string, options: UpdateOptions) {
   await Promise.all(updatePromises);
 
   console.info('Update successful.');
-}
-
-async function getAzdRepoPath() {
-  const azdPath = path.join(os.tmpdir(), 'azd');
-  try {
-    await fs.rm(azdPath, { recursive: true, force: true });
-    await runCommand(`git clone --depth 1 ${AZD_REPOSITORY} ${azdPath}`);
-    debug('Cloned azd repo to:', azdPath);
-    return azdPath;
-  } catch (error) {
-    debug('Error cloning azd repo:', error);
-    throw new Error('Error cloning azd repo');
-  }
 }
 
 async function compareInfraFiles(infraInfo: ProjectInfraInfo, azdPath: string): Promise<UpdateAction[]> {
@@ -124,8 +118,4 @@ async function updateFile(file: string, azdPath: string) {
     debug(`Error updating file ${file}:`, error);
     throw new Error(`Error updating file ${file}: ${error.message}`);
   }
-}
-
-function normalizeContent(content: string): string {
-  return content.replaceAll('\r\n', '\n').trim();
 }
