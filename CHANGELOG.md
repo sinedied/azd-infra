@@ -1,3 +1,10 @@
+## [1.1.7](https://github.com/sinedied/azd-infra/compare/1.1.6...1.1.7) (2024-06-07)
+
+
+### Bug Fixes
+
+* keep any main*.bicep file from unused modules ([0b9885e](https://github.com/sinedied/azd-infra/commit/0b9885e2cad25765af858dc9284674ba2c856ed2))
+
 ## [1.1.6](https://github.com/sinedied/azd-infra/compare/1.1.5...1.1.6) (2024-06-05)
 
 ## [1.1.5](https://github.com/sinedied/azd-infra/compare/1.1.4...1.1.5) (2024-06-05)
