@@ -25,7 +25,7 @@ export enum UpdateAction {
 
 export async function update(targetPath: string, options: UpdateOptions) {
   targetPath = convertPathToPosix(targetPath);
-  
+
   debug('Running command with:', { targetPath, options });
   console.info('Checking your infrastructure for updates...');
 

@@ -18,7 +18,7 @@ export type AddOptions = GlobalOptions;
 
 export async function add(targetPath: string, options: AddOptions) {
   targetPath = convertPathToPosix(targetPath);
-  
+
   debug('Running command with:', { targetPath, options });
   console.info('Retrieving latest core templates...');
 

@@ -19,7 +19,7 @@ export type FixOptions = GlobalOptions;
 
 export async function fix(targetPath: string, options: FixOptions) {
   targetPath = convertPathToPosix(targetPath);
-  
+
   debug('Running command with:', { targetPath, options });
   console.info('Checking your infrastructure for issues...');
 
