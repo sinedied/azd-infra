@@ -1,3 +1,10 @@
+## [1.1.8](https://github.com/sinedied/azd-infra/compare/1.1.7...1.1.8) (2024-06-07)
+
+
+### Bug Fixes
+
+* windows path issues ([8e75e72](https://github.com/sinedied/azd-infra/commit/8e75e72dba44817d34b2c9190cc186296279822d))
+
 ## [1.1.7](https://github.com/sinedied/azd-infra/compare/1.1.6...1.1.7) (2024-06-07)
 
 
