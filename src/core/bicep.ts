@@ -70,7 +70,7 @@ async function findUnusedDependencies(files: string[], graph: Record<string, str
         continue;
       }
 
-      if (!isDependencyUsed(file, usedGraph) && !file.endsWith('main.bicep')) {
+      if (!isDependencyUsed(file, usedGraph) && !/main(\..+)?\.bicep$/.test(file)) {
         debug(`Found new unused dependency: ${file}`);
         unused.add(file);
         hasChanged = true;
