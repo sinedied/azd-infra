@@ -1,5 +1,5 @@
 import { promises as fs } from 'node:fs';
-import path from 'node:path';
+import { posix as path } from 'node:path';
 import createDebug from 'debug';
 import chalk from 'chalk';
 import { type GlobalOptions, type ProjectInfraInfo, getProjectInfraInfo } from '../core/index.js';
@@ -8,7 +8,8 @@ import {
   cloneAzdRepository,
   readFile,
   normalizeContent,
-  checkRepositoryDirty
+  checkRepositoryDirty,
+  convertPathToPosix
 } from '../util/index.js';
 import { AZD_BICEP_PATH, AZD_INFRA_PATH } from '../constants.js';
 
@@ -23,6 +24,8 @@ export enum UpdateAction {
 }
 
 export async function update(targetPath: string, options: UpdateOptions) {
+  targetPath = convertPathToPosix(targetPath);
+  
   debug('Running command with:', { targetPath, options });
   console.info('Checking your infrastructure for updates...');
 

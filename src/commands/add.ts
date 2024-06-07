@@ -1,9 +1,15 @@
 import { promises as fs } from 'node:fs';
-import path from 'node:path';
+import { posix as path } from 'node:path';
 import createDebug from 'debug';
 import chalk from 'chalk';
 import { type GlobalOptions, getBicepCoreTemplates, getBicepDependencyInfo } from '../core/index.js';
-import { askForConfirmation, cloneAzdRepository, ensureDirectory, selectMany } from '../util/index.js';
+import {
+  askForConfirmation,
+  cloneAzdRepository,
+  convertPathToPosix,
+  ensureDirectory,
+  selectMany
+} from '../util/index.js';
 import { AZD_BICEP_PATH, AZD_INFRA_PATH } from '../constants.js';
 
 const debug = createDebug('add');
@@ -11,6 +17,8 @@ const debug = createDebug('add');
 export type AddOptions = GlobalOptions;
 
 export async function add(targetPath: string, options: AddOptions) {
+  targetPath = convertPathToPosix(targetPath);
+  
   debug('Running command with:', { targetPath, options });
   console.info('Retrieving latest core templates...');
 

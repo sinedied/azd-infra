@@ -1,9 +1,10 @@
 import os from 'node:os';
-import path from 'node:path';
+import { posix as path } from 'node:path';
 import { promises as fs } from 'node:fs';
 import createDebug from 'debug';
 import { AZD_REPOSITORY } from '../constants.js';
 import { runCommand } from './command.js';
+import { convertPathToPosix } from './file.js';
 
 const debug = createDebug('repository');
 
@@ -26,7 +27,7 @@ export async function checkRepositoryDirty(allowUnclean: boolean): Promise<void>
 }
 
 export async function cloneAzdRepository(): Promise<string> {
-  const azdPath = path.join(os.tmpdir(), 'azd');
+  const azdPath = convertPathToPosix(path.join(os.tmpdir(), 'azd'));
   try {
     debug('Cloning azd repo to:', azdPath);
     await fs.rm(azdPath, { recursive: true, force: true });

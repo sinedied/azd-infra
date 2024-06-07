@@ -32,3 +32,7 @@ export async function readFile(file: string) {
 export function removeFirstPosixPathSegment(filePath: string): string {
   return filePath.split('/').slice(1).join('/');
 }
+
+export function convertPathToPosix(filePath: string): string {
+  return filePath.replaceAll('\\', '/');
+}

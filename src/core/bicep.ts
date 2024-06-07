@@ -1,8 +1,8 @@
-import path from 'node:path';
+import { posix as path } from 'node:path';
 import createDebug from 'debug';
 import glob from 'fast-glob';
 import { AZD_BICEP_CORE_GLOBS, AZD_BICEP_PATH, AZD_INFRA_PATH } from '../constants.js';
-import { deepClone, pathExists, readFile } from '../util/index.js';
+import { convertPathToPosix, deepClone, pathExists, readFile } from '../util/index.js';
 import { type DependencyInfo, isDependencyUsed } from './dependency.js';
 
 const debug = createDebug('bicep');
@@ -12,7 +12,10 @@ export async function getBicepDependencyInfo(
   files: string[],
   basePath: string = AZD_INFRA_PATH
 ): Promise<DependencyInfo> {
-  const bicepFiles = files.filter((file) => file.endsWith('.bicep')).map((file) => path.join(basePath, file));
+  const bicepFiles = files
+    .filter((file) => file.endsWith('.bicep'))
+    .map((file) => convertPathToPosix(file))
+    .map((file) => path.join(basePath, file));
 
   const deps: DependencyInfo = {
     graph: {},
@@ -24,7 +27,7 @@ export async function getBicepDependencyInfo(
   const unresolvedFiles = new Set(bicepFiles);
 
   while (unresolvedFiles.size > 0) {
-    const file = path.posix.normalize(unresolvedFiles.values().next().value as string);
+    const file = path.normalize(unresolvedFiles.values().next().value as string);
 
     // Check for missing files
     if (!(await pathExists(file))) {
@@ -70,7 +73,7 @@ async function findUnusedDependencies(files: string[], graph: Record<string, str
         continue;
       }
 
-      if (!isDependencyUsed(file, usedGraph) && !/main(\..+)?\.bicep$/.test(file)) {
+      if (!isDependencyUsed(file, usedGraph) && !file.endsWith('main.bicep')) {
         debug(`Found new unused dependency: ${file}`);
         unused.add(file);
         hasChanged = true;
@@ -89,8 +92,8 @@ async function getBicepDependencies(file: string): Promise<string[]> {
 
   let match;
   while ((match = bicepModuleRegex.exec(content)) !== null) {
-    const modulePath = path.posix.join(path.posix.dirname(file), match[1]);
-    dependencies.push(path.posix.normalize(modulePath));
+    const modulePath = path.join(path.dirname(file), match[1]);
+    dependencies.push(path.normalize(modulePath));
     debug(`Found dependency in file ${file}: ${modulePath}`);
   }
 

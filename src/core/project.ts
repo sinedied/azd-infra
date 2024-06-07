@@ -1,4 +1,4 @@
-import path from 'node:path';
+import { posix as path } from 'node:path';
 import createDebug from 'debug';
 import glob from 'fast-glob';
 import { AZD_BICEP_ALL_GLOBS, AZD_BICEP_CORE_GLOBS, AZD_INFRA_PATH } from '../constants.js';

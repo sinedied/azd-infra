@@ -1,5 +1,5 @@
 import { promises as fs } from 'node:fs';
-import path from 'node:path';
+import { posix as path } from 'node:path';
 import createDebug from 'debug';
 import chalk from 'chalk';
 import { type GlobalOptions, getProjectInfraInfo, getBicepDependencyInfo, dependencyUsedBy } from '../core/index.js';
@@ -7,6 +7,7 @@ import {
   askForConfirmation,
   checkRepositoryDirty,
   cloneAzdRepository,
+  convertPathToPosix,
   pathExists,
   removeFirstPosixPathSegment
 } from '../util/index.js';
@@ -17,6 +18,8 @@ const debug = createDebug('update');
 export type FixOptions = GlobalOptions;
 
 export async function fix(targetPath: string, options: FixOptions) {
+  targetPath = convertPathToPosix(targetPath);
+  
   debug('Running command with:', { targetPath, options });
   console.info('Checking your infrastructure for issues...');
 
