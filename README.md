@@ -22,7 +22,7 @@ npm install -g azd-infra
 Or use it directly with `npx` without installing it:
 
 ```bash
-npx azd-infra <command>
+npx azd-infra@latest <command>
 ```
 
 ## Available commands
@@ -33,4 +33,3 @@ npx azd-infra <command>
 - `azd-infra refresh`: Runs `update` and `fix` in sequence.
 
 Commands are interactive and will ask you for confirmation before applying changes, unless you use the `--yes` flag.
-
