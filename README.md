@@ -27,7 +27,7 @@ Or use it directly with `npx` without installing it:
 npx azd-infra@latest <command>
 ```
 
-> ![!TIP]
+> [!TIP]
 > The quickest way to get started is to run the following command in your project's root folder:
 >
 > ```bash
