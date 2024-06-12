@@ -1,3 +1,10 @@
+## [1.1.10](https://github.com/sinedied/azd-infra/compare/1.1.9...1.1.10) (2024-06-12)
+
+
+### Bug Fixes
+
+* update notification command ([97258b9](https://github.com/sinedied/azd-infra/commit/97258b993509fdab5fb6056d18d9a8acd743aabd))
+
 ## [1.1.9](https://github.com/sinedied/azd-infra/compare/1.1.8...1.1.9) (2024-06-07)
 
 ## [1.1.8](https://github.com/sinedied/azd-infra/compare/1.1.7...1.1.8) (2024-06-07)
