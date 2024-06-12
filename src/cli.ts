@@ -22,7 +22,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export async function run(arguments_: string[] = process.argv) {
   const package_ = await getPackageJson(join(__dirname, '..'));
 
-  updateNotifier({ pkg: package_ }).notify();
+  updateNotifier({ pkg: package_ }).notify({ isGlobal: true });
 
   if (arguments_.includes('--verbose')) {
     debug.enable('*');
